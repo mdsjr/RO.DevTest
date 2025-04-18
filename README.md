@@ -18,4 +18,3 @@ If you find some code that you think can be enhanced, feel free to refactor it. 
 
 ## Creating a FrontEnd
 When creating the frontend you can choose any framework you want, but your application must connect with the Web API via HTTP requests, and it's code must be in the same repository as the Web API.
-
