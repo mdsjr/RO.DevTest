@@ -5,7 +5,8 @@ namespace RO.DevTest.Domain.Entities;
 /// <summary>
 /// Represents a <see cref="IdentityUser"/> int the API
 /// </summary>
-public class User : IdentityUser {
+public class User : IdentityUser
+{
     /// <summary>
     /// Name of the user
     /// </summary>
