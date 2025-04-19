@@ -22,9 +22,15 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        // Configure DbContext with PostgreSQL (explicit for clarity, may be in InjectPersistenceDependencies)
+        // Configure DbContext with PostgreSQL using environment variable
+        var connectionString = Environment.GetEnvironmentVariable("ROTA_DAS_OFICINAS_DB_CONNECTION");
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("Database connection string 'ROTA_DAS_OFICINAS_DB_CONNECTION' not found in environment variables.");
+        }
+
         builder.Services.AddDbContext<DefaultContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(connectionString));
 
         // Configure ASP.NET Core Identity
         builder.Services.AddIdentity<User, IdentityRole>()
@@ -77,7 +83,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-        app.UseAuthentication(); // Added for JWT authentication
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
