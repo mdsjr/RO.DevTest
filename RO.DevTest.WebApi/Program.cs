@@ -7,6 +7,7 @@ using RO.DevTest.Domain.Entities;
 using RO.DevTest.Infrastructure.IoC;
 using RO.DevTest.Persistence;
 using RO.DevTest.Persistence.IoC;
+using NSwag.AspNetCore; // Adicionado para NSwag
 using System.Text;
 
 namespace RO.DevTest.WebApi;
@@ -19,8 +20,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddOpenApiDocument(); // Substitui AddEndpointsApiExplorer e AddSwaggerGen
 
         // Configure DbContext with PostgreSQL using environment variable
         var connectionString = Environment.GetEnvironmentVariable("ROTA_DAS_OFICINAS_DB_CONNECTION");
@@ -78,8 +78,8 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseOpenApi(); // Substitui UseSwagger
+            app.UseSwaggerUi(); // Substitui UseSwaggerUI
         }
 
         app.UseHttpsRedirection();
@@ -90,5 +90,4 @@ public class Program
 
         app.Run();
     }
-
 }
