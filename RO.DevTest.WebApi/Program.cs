@@ -38,9 +38,15 @@ public class Program
             .AddDefaultTokenProviders();
 
         // Configure JWT Authentication
+        // Configure JWT Authentication
         var jwtKey = builder.Configuration["Jwt:Key"];
         var jwtIssuer = builder.Configuration["Jwt:Issuer"];
         var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+        if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
+        {
+            throw new InvalidOperationException("JWT configuration values (Jwt:Key, Jwt:Issuer, Jwt:Audience) must be provided in configuration.");
+        }
 
         builder.Services.AddAuthentication(options =>
         {
