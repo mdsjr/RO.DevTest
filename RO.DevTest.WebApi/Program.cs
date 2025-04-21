@@ -7,7 +7,7 @@ using RO.DevTest.Domain.Entities;
 using RO.DevTest.Infrastructure.IoC;
 using RO.DevTest.Persistence;
 using RO.DevTest.Persistence.IoC;
-using NSwag.AspNetCore; // Adicionado para NSwag
+using NSwag.AspNetCore;
 using System.Text;
 
 namespace RO.DevTest.WebApi;
@@ -20,13 +20,14 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
-        builder.Services.AddOpenApiDocument(); // Substitui AddEndpointsApiExplorer e AddSwaggerGen
+        builder.Services.AddOpenApiDocument();
 
-        // Configure DbContext with PostgreSQL using environment variable
-        var connectionString = Environment.GetEnvironmentVariable("ROTA_DAS_OFICINAS_DB_CONNECTION");
+        // Configure DbContext with PostgreSQL
+        var connectionString = builder.Configuration.GetConnectionString("ROTA_DAS_OFICINAS_DB_CONNECTION")
+            ?? Environment.GetEnvironmentVariable("ROTA_DAS_OFICINAS_DB_CONNECTION");
         if (string.IsNullOrEmpty(connectionString))
         {
-            throw new InvalidOperationException("Database connection string 'ROTA_DAS_OFICINAS_DB_CONNECTION' not found in environment variables.");
+            throw new InvalidOperationException("Database connection string 'ROTA_DAS_OFICINAS_DB_CONNECTION' not found.");
         }
 
         builder.Services.AddDbContext<DefaultContext>(options =>
@@ -37,7 +38,6 @@ public class Program
             .AddEntityFrameworkStores<DefaultContext>()
             .AddDefaultTokenProviders();
 
-        // Configure JWT Authentication
         // Configure JWT Authentication
         var jwtKey = builder.Configuration["Jwt:Key"];
         var jwtIssuer = builder.Configuration["Jwt:Issuer"];
@@ -70,7 +70,7 @@ public class Program
         builder.Services.InjectPersistenceDependencies()
             .InjectInfrastructureDependencies();
 
-        // Add MediatR to program
+        // Add MediatR
         builder.Services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(
@@ -84,8 +84,8 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseOpenApi(); // Substitui UseSwagger
-            app.UseSwaggerUi(); // Substitui UseSwaggerUI
+            app.UseOpenApi();
+            app.UseSwaggerUi();
         }
 
         app.UseHttpsRedirection();
